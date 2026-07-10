@@ -3,6 +3,16 @@ resource "aws_ecr_pull_through_cache_rule" "ecr_public" {
   upstream_registry_url = "public.ecr.aws"
 }
 
+resource "aws_ecr_pull_through_cache_rule" "quay" {
+  ecr_repository_prefix = "quay"
+  upstream_registry_url = "quay.io"
+}
+
+resource "aws_ecr_pull_through_cache_rule" "gcr" {
+  ecr_repository_prefix = "gcr"
+  upstream_registry_url = "gcr.io"
+}
+
 resource "aws_iam_role_policy" "ecr_pull_through" {
   name = "ecr-pull-through-cache"
   role = aws_iam_role.eks_node.name # your existing node role
@@ -17,7 +27,7 @@ resource "aws_iam_role_policy" "ecr_pull_through" {
           "ecr:CreateRepository",
           "ecr:BatchImportUpstreamImage"
         ]
-        Resource = "arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/ecr-public/*"
+        Resource = "arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/*"
       }
     ]
   })
